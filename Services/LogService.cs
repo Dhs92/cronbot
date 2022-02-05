@@ -15,23 +15,17 @@ namespace DiscordBot.Services
         private readonly ILogger _discordLogger;
         private readonly ILogger _commandsLogger;
 
-        public LogService(DiscordSocketClient discord, CommandService commands, ILoggerFactory loggerFactory)
+        public LogService(DiscordSocketClient discord, CommandService commands)
         {
             _discord = discord;
             _commands = commands;
 
-            _loggerFactory = ConfigureLogging(loggerFactory);
+            _loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             _discordLogger = _loggerFactory.CreateLogger("discord");
             _commandsLogger = _loggerFactory.CreateLogger("commands");
 
             _discord.Log += LogDiscord;
             _commands.Log += LogCommand;
-        }
-
-        private ILoggerFactory ConfigureLogging(ILoggerFactory factory)
-        {
-            factory.AddConsole();
-            return factory;
         }
 
         private Task LogDiscord(LogMessage message)
